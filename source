@@ -12699,20 +12699,21 @@ if game.PlaceId == 574746640 then
 		dig(speaker)
 	end)
 
+	autodig = false
 	addcmd("autodig",{"adig","autoterraindig"},function(args, speaker)
 		delayd = tonumber(args[1]) or 1.55
 
 		if args[1]:lower() == 'on' then
-			_G.AUTODIG = true
+			autodig = true
 			notify("Turned on autodig")
 		elseif args[1]:lower() == 'off' then
-			_G.AUTODIG = false
+			autodig = false
 			notify("Turned off autodig")
 		else
 			return notify("Invalid switch! Expected on/off")
 		end
 
-		while _G.AUTODIG do
+		while autodig do
 			autodig(speaker)
 			task.wait(delayd)
 		end
