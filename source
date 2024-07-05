@@ -18,7 +18,7 @@
 ]]--
 
 if IY_LOADED and not _G.IY_DEBUG == true then
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/fuckusfm/infiniteyield-reborn/master/uselessscriptthatexistsinthisrepoiwin'))()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/buhhhhg/infiniteyield-reborn/master/uselessscriptthatexistsinthisrepoiwin'))()
 	return
 end
 
@@ -4750,15 +4750,17 @@ if game.PlaceId ~= 574746640 then
 	CMDs[#CMDs + 1] = {NAME = 'fastbring [player] (TOOL)', DESC = 'Brings a player (less reliable) (YOU NEED A TOOL)'}
 	CMDs[#CMDs + 1] = {NAME = 'teleport / tp [player] [player] (TOOL)', DESC = 'Teleports a player to another player (YOU NEED A TOOL)'}
 	CMDs[#CMDs + 1] = {NAME = 'fastteleport / fasttp [player] [player] (TOOL)', DESC = 'Teleports a player to another player (less reliable) (YOU NEED A TOOL)'}
-	CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools [num]', DESC = 'Duplicates your inventory tools a set amount of times'}
+	CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools [delay]', DESC = 'Duplicates your inventory tools a set amount of times'}
 else
 	CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 	CMDs[#CMDs + 1] = {NAME = '-- 4nn1\'s Place --', DESC = 'Commands for 4nn1\'s Place'}
 	CMDs[#CMDs + 1] = {NAME = 'kill [player]', DESC = 'Attempts to kill a player'}
 	CMDs[#CMDs + 1] = {NAME = 'dig / terraindig / removeterrain / digterrain', DESC = 'Attempts to dig part of terrain'}
+	CMDs[#CMDs + 1] = {NAME = 'autodig / adig / autoterraindig [delay:1.55]', DESC = 'Automatically digs'}
 	CMDs[#CMDs + 1] = {NAME = 'brn / bringnpcs / bringallnpcs / bringall', DESC = 'Attempts to bring npc(s)'}
-	CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools / itemdupe / itemspam / is', DESC = 'Drops items'}
+	CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools / itemdupe / itemspam / is [delay:0]', DESC = 'Drops items'}
 	CMDs[#CMDs + 1] = {NAME = 'undupetools / unclonetools / unitemdupe / unitemspam / unis', DESC = 'Stops dropping items'}
+	CMDs[#CMDs + 1] = {NAME = 'bombtools / bt [tools:5] [delay:0.01]', DESC = 'Grab a lot of tools and then drop them all at once'}
 	CMDs[#CMDs + 1] = {NAME = 'spamtime / stime / flash [num]', DESC = 'Spams the time by given speed'}
 	CMDs[#CMDs + 1] = {NAME = 'unspamtime / unstime / unflash', DESC = 'Stops spamming the time'}
 	CMDs[#CMDs + 1] = {NAME = 'sitcat / unexplodablecat', DESC = 'Removes network ownership from cats'}
@@ -4766,7 +4768,7 @@ else
 	CMDs[#CMDs + 1] = {NAME = 'forceday / fday', DESC = 'Forces to be day'}
 	CMDs[#CMDs + 1] = {NAME = 'forcenight / fnight', DESC = 'Forces to be night'}
 	CMDs[#CMDs + 1] = {NAME = 'unforceday / unforcenight / unfday / unfnight', DESC = ''}
-	CMDs[#CMDs + 1] = {NAME = 'gettools / gt', DESC = 'Gets tools'}
+	CMDs[#CMDs + 1] = {NAME = 'gettools / gt [times:0] [delay:0.001]', DESC = 'Gets tools'}
 	CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 end
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
@@ -6530,7 +6532,7 @@ local TeleportCheck = false
 Players.LocalPlayer.OnTeleport:Connect(function(State)
 	if KeepInfYield and (not TeleportCheck) and queueteleport then
 		TeleportCheck = true
-		queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/fuckusfm/infiniteyield-reborn/master/source'))()")
+		queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/buhhhhg/infiniteyield-reborn/master/source'))()")
 	end
 end)
 
@@ -12638,13 +12640,14 @@ end
 -- // Commands \\ --
 
 -- guess how many ct.CFrame = hrp.CFrame there ARE! --
+-- 4+? - k5utils
+
 if game.PlaceId == 574746640 then
-	addcmd("dig",{"terraindig","removeterrain","digterrain"},function(args, speaker)
-		notify("Digging!")
+	function dig(speaker)
 		local hrp = getRoot(speaker.Character)
 		local cat = nil
 		cat = getCat("socky") or getCat("muffy") or (function()
-			return notify("No cats were found!")
+			return "No cats were found!"
 		end)()
 		local ct = cat:FindFirstChild("Torso")
 		local oldCFrame = hrp.CFrame
@@ -12665,6 +12668,53 @@ if game.PlaceId == 574746640 then
 		task.wait(.4)
 		if cat:FindFirstChild("Humanoid") then
 			cat.Humanoid.Health = 0
+		end
+	end
+
+	function autodig(speaker)
+		digResult = dig(speaker)
+		if digResult == "No cats were found!" then
+			repeat task.wait(1) until getCat("socky") ~= nil or getCat("muffy") ~= nil
+			autodig(speaker)
+		end
+	end
+
+	function gtools(delayd)
+		workspace.Tools.Chest_Acceleration_Coil.LidToggle:FireServer()
+		task.wait(delayd)
+		workspace.Tools.Chest_Cyclotron.LidToggle:FireServer()
+		task.wait(delayd)
+		workspace.Tools.Chest_Gravity_Coil.LidToggle:FireServer()
+		task.wait(delayd)
+		workspace.Cabins.StarterCabin.Chest_Lantern.LidToggle:FireServer()
+		task.wait(delayd)
+		workspace.Tools.Chest_Invisibility_Cloak.LidToggle:FireServer()
+		task.wait(delayd)
+		workspace.Tools.Chest_Teleport.LidToggle:FireServer()
+		task.wait(delayd)
+	end
+
+	addcmd("dig",{"terraindig","removeterrain","digterrain"},function(args, speaker)
+		notify("Digging!")
+		dig(speaker)
+	end)
+
+	addcmd("autodig",{"adig","autoterraindig"},function(args, speaker)
+		delayd = tonumber(args[1]) or 1.55
+
+		if args[1]:lower() == 'on' then
+			_G.AUTODIG = true
+			notify("Turned on autodig")
+		elseif args[1]:lower() == 'off' then
+			_G.AUTODIG = false
+			notify("Turned off autodig")
+		else
+			return notify("Invalid switch! Expected on/off")
+		end
+
+		while _G.AUTODIG do
+			autodig(speaker)
+			task.wait(delayd)
 		end
 	end)
 
@@ -12693,6 +12743,7 @@ if game.PlaceId == 574746640 then
 
 	local itemspamenabled = false
 	addcmd('dupetools',{'clonetools','itemdupe','itemspam','is'},function(args,speaker)
+		delayd = tonumber(args[1]) or 0
 		itemspamenabled = true
 		for i,v in pairs(Players.LocalPlayer.Backpack:GetChildren()) do
 			if v:IsA("Tool") then
@@ -12707,12 +12758,7 @@ if game.PlaceId == 574746640 then
 		end
 		task.spawn(function()
 			while task.wait() do
-				workspace.Tools.Chest_Acceleration_Coil.LidToggle:FireServer()
-				workspace.Tools.Chest_Cyclotron.LidToggle:FireServer()
-				workspace.Tools.Chest_Gravity_Coil.LidToggle:FireServer()
-				workspace.Cabins.StarterCabin.Chest_Lantern.LidToggle:FireServer()
-				workspace.Tools.Chest_Invisibility_Cloak.LidToggle:FireServer()
-				workspace.Tools.Chest_Teleport.LidToggle:FireServer()
+				gtools(delayd)
 				if itemspamenabled == false then
 					break
 				end
@@ -12745,7 +12791,7 @@ if game.PlaceId == 574746640 then
 	local spamtimeenabled = false
 	addcmd('spamtime',{'stime','flash'},function(args,speaker)
 		notify('Spamtime enabled')
-		local TIME_SPAM_SPEED = tonumber(args[1]) or 0.01
+		local TIME_SPAM_SPEED = tonumber(args[1]) or 0.001
 		spamtimeenabled = true
 		task.spawn(function()
 			while spamtimeenabled do
@@ -12796,12 +12842,34 @@ if game.PlaceId == 574746640 then
 	end)
 
 	addcmd('gettools',{'gt'}, function(args, speaker)
-		workspace.Tools.Chest_Acceleration_Coil.LidToggle:FireServer()
-		workspace.Tools.Chest_Cyclotron.LidToggle:FireServer()
-		workspace.Tools.Chest_Gravity_Coil.LidToggle:FireServer()
-		workspace.Cabins.StarterCabin.Chest_Lantern.LidToggle:FireServer()
-		workspace.Tools.Chest_Invisibility_Cloak.LidToggle:FireServer()
-		workspace.Tools.Chest_Teleport.LidToggle:FireServer()
+		times = tonumber(args[1]) or 0
+		delayd = tonumber(args[2]) or 0.001
+		if times ~= 0 then
+			for i=1,times do
+				gtools()
+				task.wait(delayd)
+			end
+		end
+
+		if times == 0 then
+			gtools()
+		end
+	end)
+
+	addcmd('bombtools',{'bt'}, function(args, speaker)
+		times = tonumber(args[1]) or 5
+		delayd = tonumber(args[2]) or 0.01
+		notif("Grabbing tools", "WARN: This might glitch your character, idk", 2)
+		for i=1,times do
+			gtools(delayd)
+			task.wait(delayd)
+		end
+		task.wait()
+		for i,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
+			if v:IsA("Tool") then
+				v.Parent = workspace
+			end
+		end
 	end)
 
 	addcmd('sitcat',{"unexplodablecat"},function(args,speaker)
@@ -14000,7 +14068,7 @@ IYMouse.Move:Connect(checkTT)
 
 task.spawn(function()
 	local success, latestVersionInfo = pcall(function() 
-		local versionJson = game:HttpGet('https://raw.githubusercontent.com/fuckusfm/infiniteyield-reborn/master/version')
+		local versionJson = game:HttpGet('https://raw.githubusercontent.com/buhhhhg/infiniteyield-reborn/master/version')
 		return HttpService:JSONDecode(versionJson)
 	end)
 
